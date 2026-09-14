@@ -80,6 +80,11 @@
   .dir p{font-size:.85rem;color:var(--muted);margin:0 0 12px;flex:1}
   .dir .go{font-size:.8rem;color:var(--primary);font-weight:600;display:inline-flex;align-items:center;gap:5px}
   .dir .go .host{font-family:var(--f-mono);font-size:.68rem;color:var(--faint);font-weight:400}
+  .axis-lbl{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.05em;color:var(--accent-2);font-weight:600;margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .axis-lbl:first-of-type{margin-top:6px}
+  .axis-grid{display:grid;gap:14px;grid-template-columns:repeat(3,1fr)}
+  @media(max-width:820px){.axis-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.axis-grid{grid-template-columns:1fr}}
 
   .brief{grid-template-columns:repeat(2,1fr)}
   @media(max-width:640px){.brief{grid-template-columns:1fr}}
@@ -130,37 +135,71 @@
     <!-- 소스 디렉터리 -->
     <section class="sec">
       <div class="sec-h"><span class="ic">🔗</span><h2>공공 데이터 바로가기</h2></div>
-      <p class="sec-sub">주제별로 흩어진 1인가구 공공데이터의 관문. 클릭하면 원본 기관으로 이동합니다.</p>
-      <div class="grid dirs">
-        <a class="dir" href="https://kosis.kr" target="_blank" rel="noopener">
-          <div class="dc">인구·가구</div><h4>📈 국가통계 KOSIS</h4>
-          <p>전국·시도별 1인가구 수와 비중, 장래가구추계 등 기초 통계.</p>
+      <p class="sec-sub">1인가구 데이터를 4개 축으로 정리했습니다. 클릭하면 원본 기관으로 이동합니다.</p>
+
+      <div class="axis-lbl">① 통계 · 국가데이터처</div>
+      <div class="axis-grid">
+        <a class="dir" href="https://kosis.kr/visual/nsportalStats/detailContents.do?statJipyoId=3645&listId=A&vStatJipyoId=4880" target="_blank" rel="noopener">
+          <div class="dc">인구·가구 통계</div><h4>📈 KOSIS 100대지표 · 1인가구</h4>
+          <p>전국·시도 1인가구 수·비중, 장래가구추계, 소득·자산·부채까지 국가통계.</p>
           <span class="go">바로가기 <span class="host">kosis.kr</span></span>
         </a>
-        <a class="dir" href="https://data.seoul.go.kr" target="_blank" rel="noopener">
-          <div class="dc">지역 분포</div><h4>🗺 서울 열린데이터광장</h4>
-          <p>1인가구 연령별·거처종류별·혼인상태별 등 세부 분포.</p>
-          <span class="go">바로가기 <span class="host">data.seoul.go.kr</span></span>
+        <a class="dir" href="https://sgis.kostat.go.kr" target="_blank" rel="noopener">
+          <div class="dc">지역 분포 지도</div><h4>🗺 통계지리정보 SGIS</h4>
+          <p>행정동 단위 1인가구 분포를 지도로 확인.</p>
+          <span class="go">바로가기 <span class="host">sgis.kostat.go.kr</span></span>
         </a>
-        <a class="dir" href="https://www.bokjiro.go.kr" target="_blank" rel="noopener">
-          <div class="dc">복지·지원</div><h4>🤝 복지로</h4>
-          <p>1인가구가 받을 수 있는 복지서비스 목록·대상·신청 방법.</p>
-          <span class="go">바로가기 <span class="host">bokjiro.go.kr</span></span>
-        </a>
-        <a class="dir" href="https://www.data.go.kr" target="_blank" rel="noopener">
-          <div class="dc">지자체 지원사업</div><h4>🏙 공공데이터포털</h4>
-          <p>지역별 1인가구 지원사업·시설·안심 서비스 데이터.</p>
+      </div>
+
+      <div class="axis-lbl">② 가족정책 · 성평등가족부</div>
+      <div class="axis-grid">
+        <a class="dir" href="https://www.data.go.kr/data/15054982/fileData.do" target="_blank" rel="noopener">
+          <div class="dc">정책 기초자료</div><h4>📋 가족실태조사</h4>
+          <p>3년 주기 법정조사(1인가구 포함). 가족정책·건강가정기본계획의 근거.</p>
           <span class="go">바로가기 <span class="host">data.go.kr</span></span>
         </a>
+        <a class="dir" href="https://www.mogef.go.kr" target="_blank" rel="noopener">
+          <div class="dc">정책·통계</div><h4>🏛 성평등가족부</h4>
+          <p>1인가구 관련 가족정책·실태조사·연구 자료.</p>
+          <span class="go">바로가기 <span class="host">mogef.go.kr</span></span>
+        </a>
+      </div>
+
+      <div class="axis-lbl">③ 지원사업 · 지자체·복지</div>
+      <div class="axis-grid">
+        <a class="dir" href="https://1in.seoul.go.kr/front/user/main.do" target="_blank" rel="noopener">
+          <div class="dc">서울 1인가구 포털</div><h4>🙋 씽글벙글 서울</h4>
+          <p>서울시·자치구 1인가구 지원정책·프로그램을 지역·연령·주제(안전·주거·경제·외로움·질병)별로.</p>
+          <span class="go">바로가기 <span class="host">1in.seoul.go.kr</span></span>
+        </a>
+        <a class="dir" href="https://www.data.go.kr/data/15125772/fileData.do" target="_blank" rel="noopener">
+          <div class="dc">참여프로그램</div><h4>🎯 1인가구 참여프로그램 현황</h4>
+          <p>자치구 1인가구지원센터가 운영하는 프로그램 데이터.</p>
+          <span class="go">바로가기 <span class="host">data.go.kr</span></span>
+        </a>
+        <a class="dir" href="https://www.bokjiro.go.kr" target="_blank" rel="noopener">
+          <div class="dc">복지서비스</div><h4>🤝 복지로</h4>
+          <p>1인가구가 받을 수 있는 복지서비스 목록·대상·신청.</p>
+          <span class="go">바로가기 <span class="host">bokjiro.go.kr</span></span>
+        </a>
         <a class="dir" href="https://www.myhome.go.kr" target="_blank" rel="noopener">
-          <div class="dc">주거</div><h4>🏠 마이홈포털</h4>
+          <div class="dc">주거지원</div><h4>🏠 마이홈포털</h4>
           <p>청년·1인가구 주거복지, 공공임대주택 안내와 자격 조회.</p>
           <span class="go">바로가기 <span class="host">myhome.go.kr</span></span>
         </a>
-        <a class="dir" href="https://www.mogef.go.kr" target="_blank" rel="noopener">
-          <div class="dc">실태·정책</div><h4>📋 성평등가족부</h4>
-          <p>가족실태조사 등 1인가구 관련 실태·정책 자료.</p>
-          <span class="go">바로가기 <span class="host">mogef.go.kr</span></span>
+      </div>
+
+      <div class="axis-lbl">④ 데이터 관문 · 통합 개방</div>
+      <div class="axis-grid">
+        <a class="dir" href="https://www.data.go.kr" target="_blank" rel="noopener">
+          <div class="dc">전국 통합</div><h4>🏙 공공데이터포털</h4>
+          <p>지자체 1인가구 지원사업·시설 등 전국 공공데이터 검색.</p>
+          <span class="go">바로가기 <span class="host">data.go.kr</span></span>
+        </a>
+        <a class="dir" href="https://data.seoul.go.kr" target="_blank" rel="noopener">
+          <div class="dc">지역 데이터</div><h4>📂 서울 열린데이터광장</h4>
+          <p>1인가구 연령별·거처종류별·혼인상태별 등 세부 통계.</p>
+          <span class="go">바로가기 <span class="host">data.seoul.go.kr</span></span>
         </a>
       </div>
     </section>
