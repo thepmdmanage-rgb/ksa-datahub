@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>1인가구 데이터 허브</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="KSA 1인가구협회가 흩어진 공공 1인가구 데이터를 한곳에 모아 안내하는 참고형 데이터 허브">
@@ -69,6 +70,17 @@
   .stat .src{font-family:var(--f-mono);font-size:.64rem;color:var(--faint);margin-top:10px;display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap}
   .stat .src a{color:var(--faint)}
   .stat .src a:hover{color:var(--primary)}
+  .data-stamp{font-family:var(--f-mono);font-size:.66rem;color:var(--faint);margin-top:10px}
+
+  .rgrid{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:640px){.rgrid{grid-template-columns:1fr}}
+  .rstat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm)}
+  .rstat .rname{font-size:.9rem;font-weight:600;color:var(--ink-2);margin-bottom:8px}
+  .rstat .v{font-family:var(--f-serif);font-weight:700;font-size:1.9rem;color:var(--primary);font-variant-numeric:tabular-nums;line-height:1.1}
+  .rstat .vlbl{font-size:.72rem;color:var(--muted);margin-top:2px}
+  .rstat .meta{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:7px;font-size:.82rem;color:var(--muted)}
+  .rstat .meta .mrow{display:flex;justify-content:space-between;gap:10px}
+  .rstat .meta .mrow b{color:var(--ink-2);font-weight:600;font-variant-numeric:tabular-nums}
 
   .dirs{grid-template-columns:repeat(3,1fr)}
   @media(max-width:820px){.dirs{grid-template-columns:repeat(2,1fr)}}
@@ -130,6 +142,15 @@
         <div class="stat"><div class="v">1위</div><div class="k">전체 가구 유형 중 최다</div><div class="src"><span>기준 2023</span><a href="https://kosis.kr" target="_blank" rel="noopener">통계청 ↗</a></div></div>
       </div>
       <div class="note" style="margin-top:16px"><span class="lbl">데이터 안내</span> 본 지표는 협회가 공식 통계를 <b>정리한 참고본</b>입니다(실시간 자동 갱신 아님). 정확한 최신 수치는 각 <b>원본 출처 링크</b>에서 확인하세요. 실시간 자동 연동 허브는 기관 협업·서버 확보 후 단계로 준비 중입니다.</div>
+    </section>
+
+    <!-- 지역별 1인가구 비중 · SGIS 실데이터 (기본 숨김: hub.json 성공 시 JS가 노출) -->
+    <section class="sec" id="regionalSec" hidden>
+      <div class="sec-h"><span class="ic">🗺</span><h2>지역별 1인가구 비중 · SGIS 실데이터</h2></div>
+      <p class="sec-sub">국가데이터처 SGIS의 시군구 단위 통계를 협회가 자동 집계한 스냅샷입니다.</p>
+      <div class="grid rgrid" id="regionalGrid"></div>
+      <p class="data-stamp" id="regionalStamp"></p>
+      <div class="note" style="margin-top:14px"><span class="lbl">해석 주의</span> 위 값은 <b>시군구 단순평균</b>이며, 가구수로 가중한 공식 전국 비중(약 34.5%)과 다릅니다.</div>
     </section>
 
     <!-- 소스 디렉터리 -->
@@ -227,4 +248,57 @@
   (function(){var root=document.documentElement,btn=document.getElementById('themeBtn');var s=null;try{s=localStorage.getItem('ksa-theme')}catch(e){}if(s)root.setAttribute('data-theme',s);
   function lab(){var c=root.getAttribute('data-theme');var d=c?c==='dark':matchMedia('(prefers-color-scheme:dark)').matches;btn.textContent=d?'☀ 라이트':'☾ 다크'}lab();
   btn.onclick=function(){var c=root.getAttribute('data-theme');var d=c?c==='dark':matchMedia('(prefers-color-scheme:dark)').matches;var n=d?'light':'dark';root.setAttribute('data-theme',n);try{localStorage.setItem('ksa-theme',n)}catch(e){}lab()};})();
+</script>
+<script>
+  /* 지역별 SGIS 실데이터: data/hub.json 의 regional[] 렌더.
+     성공 시에만 #regionalSec 노출. 실패/부재/malformed → 섹션 숨김 유지(콘솔 예외 0).
+     전국 헤드라인 4카드는 정적이며 이 스크립트와 무관. 계약: _workspace/00_input/verified_api_contract.md */
+  (function(){
+    if(!window.fetch) return;                                  // 초고령 브라우저 → 섹션 숨김 유지
+    var sec=document.getElementById('regionalSec');
+    var grid=document.getElementById('regionalGrid');
+    var stamp=document.getElementById('regionalStamp');
+    if(!sec||!grid) return;
+
+    function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+    function num(v,unit){                                       // 숫자+단위(유한값만)
+      var n=Number(v);
+      return Number.isFinite(n)?(n.toLocaleString('ko-KR')+(unit||'')):null;}
+    function isValid(obj){
+      if(!obj||!Array.isArray(obj.regional)||obj.regional.length<1) return false;
+      return obj.regional.every(function(it){
+        return it&&typeof it.name==='string'&&it.name.length>0&&Number.isFinite(Number(it.value));});}
+    function cardHTML(it){
+      var unit=it.unit||'';
+      var title=it.formula?' title="'+esc(it.formula)+'"':'';
+      var rng=(num(it.min,unit)!=null&&num(it.max,unit)!=null)
+        ? '<div class="mrow"><span>범위</span><b>최저 '+esc(num(it.min,unit))+' ~ 최고 '+esc(num(it.max,unit))+'</b></div>' : '';
+      var cnt=Number.isFinite(Number(it.count))
+        ? '<div class="mrow"><span>대상</span><b>'+esc(Number(it.count).toLocaleString('ko-KR'))+'개 시군구</b></div>' : '';
+      var seoul=(num(it.seoulAvg,unit)!=null)
+        ? '<div class="mrow"><span>서울 25구 평균</span><b>'+esc(num(it.seoulAvg,unit))+'</b></div>' : '';
+      return '<div class="rstat"'+title+'>'+
+             '<div class="rname">'+esc(it.name)+'</div>'+
+             '<div class="v">'+esc(num(it.value,unit))+'</div>'+
+             '<div class="vlbl">전국 시군구 평균</div>'+
+             '<div class="meta">'+rng+cnt+seoul+'</div></div>';}
+
+    fetch('data/hub.json',{cache:'no-store'})
+      .then(function(r){if(!r.ok) throw 0;return r.json();})
+      .then(function(obj){
+        if(!isValid(obj)) throw 0;
+        grid.innerHTML=obj.regional.map(cardHTML).join('');
+        if(stamp){
+          var when=String(obj.generatedAt||'');
+          var d=new Date(obj.generatedAt);
+          if(!isNaN(d.getTime())) when=d.toLocaleString('ko-KR');
+          var src=obj.source||'국가데이터처 SGIS';
+          var yr=obj.year?('기준 '+esc(obj.year)+' · '):'';
+          stamp.textContent=yr+src+(when?(' · 자동 스냅샷 '+when):'');
+        }
+        sec.hidden=false;                                      // 성공 시에만 노출
+      })
+      .catch(function(){ console.info('[datahub] regional 스냅샷 미사용 — 섹션 숨김(폴백).'); });
+  })();
 </script>

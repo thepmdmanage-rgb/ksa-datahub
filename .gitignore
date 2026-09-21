@@ -1,0 +1,14 @@
+# SGIS 실제 인증 키 — 절대 커밋 금지 (tools/README.md 참고)
+tools/secrets.local.json
+
+# 원자적 기록 중간 산출물
+*.tmp
+data/hub.json.tmp
+
+# OS/에디터 잡파일
+.DS_Store
+Thumbs.db
+
+# 내부 산출물(비공개) — 파이프라인 작업공간·감사원장
+_workspace/
+docs/

@@ -1,0 +1,11 @@
+{
+  "base": "https://sgisapi.mods.go.kr/OpenAPI3",
+  "service": "jibang/category_a",
+  "year": "2024",
+  "source": "국가데이터처 SGIS",
+  "sourceUrl": "https://sgis.mods.go.kr",
+  "indicators": [
+    { "jibang_idx_id": "d1", "name": "1인가구 비중", "unit": "%" },
+    { "jibang_idx_id": "n1", "name": "65세 이상 1인가구 비중", "unit": "%" }
+  ]
+}
